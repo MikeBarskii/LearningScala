@@ -8,6 +8,7 @@ object OOClass extends App {
   println(personA.age)
   println(personA.x)
   personA.greet("Daniel")
+  println(personA)
 }
 
 class Person(name: String, age: Int) //constructor
@@ -38,4 +39,5 @@ class PersonA(name: String, val age: Int) {
     class PersonA(name: String, val age: Int = 0)
    */
   def this(name: String) = this(name, 0)
+
 }

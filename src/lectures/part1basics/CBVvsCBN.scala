@@ -1,4 +1,4 @@
-package part1basics
+package lectures.part1basics
 
 object CBVvsCBN extends App {
 

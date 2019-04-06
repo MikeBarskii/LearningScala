@@ -1,4 +1,4 @@
-package part1basics
+package lectures.part1basics
 
 object StringOps extends App {
   val str: String = "Hello, I'm learning Scala"
@@ -29,4 +29,9 @@ object StringOps extends App {
   val speed = 1.2f
   val myth = f"$name%s can eat $speed%2.2f burgers per minute" //we can set format of string
   println(myth)
+
+  //raw-interpolator
+  println(raw"This is a \n newline") //similar s-interpolator but doesn't skip literals
+  val escaped = "This is a \n newline"
+  println(raw"$escaped")
 }

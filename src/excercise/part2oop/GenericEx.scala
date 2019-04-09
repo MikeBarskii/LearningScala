@@ -11,12 +11,13 @@ object GenericEx extends App {
           - flatMap(transformer from A to MyList[B]) => MyList[B]
    */
 
-  trait MyPredicate[-T] {
-    def test(element: T): Boolean
-  }
-
-  trait MyTransformer[-A, B] {
-    def transform(element: A): B
-  }
+  //  trait MyPredicate[-T] {
+  //    def apply(element: StackTraceElement: MyPredicate = new MyPredicate()
+  //    def test(element: T): Boolean
+  //  }
+  //
+  //  trait MyTransformer[-A, B] {
+  //    def transform(element: A): B
+  //  }
 
 }

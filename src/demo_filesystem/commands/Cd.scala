@@ -8,20 +8,16 @@ import scala.annotation.tailrec
 class Cd(dir: String) extends Command {
   override def apply(state: State): State = {
 
-    // 1. find root
     val root = state.root
     val wd = state.wd
 
-    // 2. find the absolute path of the directory I want to cd to
     val absolutePath =
       if (dir.startsWith(Directory.SEPARATOR)) dir
       else if (wd.isRoot) wd.path + dir
       else wd.path + Directory.SEPARATOR + dir
 
-    // 3. find the directory to cd to, given the path
     val destinationDirectory = doFindEntry(root, absolutePath)
 
-    // 4. change the state given the new directory
     if (destinationDirectory == null || !destinationDirectory.isDirectory)
       state.setMessage(dir + ": not such directory")
     else
@@ -41,10 +37,21 @@ class Cd(dir: String) extends Command {
       }
     }
 
-    // 1. tokens
+    @tailrec
+    def collapseRelativeTokens(path: List[String], result: List[String]): List[String] = {
+      if (path.isEmpty) result
+      else if (".".equals(path.head)) collapseRelativeTokens(path.tail, result)
+      else if ("..".equals(path.head)) {
+        if (result.isEmpty) null
+        else collapseRelativeTokens(path.tail, result.init)
+      } else collapseRelativeTokens(path.tail, result :+ path.head)
+    }
+
     val tokens: List[String] = path.substring(1).split(Directory.SEPARATOR).toList
 
-    // 2. navigate to the correct entry
-    findEntryHelper(root, tokens)
+    val newTokens = collapseRelativeTokens(tokens, List())
+
+    if (newTokens == null) null
+    else findEntryHelper(root, newTokens)
   }
 }

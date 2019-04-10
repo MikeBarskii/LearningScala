@@ -93,17 +93,11 @@ object ListTests extends App {
   println(listOfIntegers) // [1 2 3]
   println(listOfStrings) // [Hello Scala]
 
-  println(listOfIntegers.map(new Function1[Int, Int] {
-    override def apply(element: Int): Int = element + 2
-  }).toString)
+  println(listOfIntegers.map(_ + 2).toString)
 
-  println(listOfIntegers.filter(new Function1[Int, Boolean] {
-    override def apply(element: Int): Boolean = element % 2 == 0
-  }).toString)
+  println(listOfIntegers.filter(_ % 2 == 0).toString)
 
   val anotherListOfIntegers: MyList[Int] = new ConsList(6, new ConsList(4, new ConsList(5, EmptyList)))
   println(listOfIntegers ++ anotherListOfIntegers)
-  println(listOfIntegers.flatMap(new Function1[Int, MyList[Int]] {
-    override def apply(element: Int): MyList[Int] = new ConsList(element, new ConsList(element + 1, EmptyList))
-  }).toString)
+  println(listOfIntegers.flatMap((element: Int) => new ConsList(element, new ConsList(element + 1, EmptyList))).toString)
 }

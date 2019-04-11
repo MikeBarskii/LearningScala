@@ -30,6 +30,13 @@ abstract class MyList[+A] {
 
   // concatenation
   def ++[B >: A](list: MyList[B]): MyList[B]
+
+  // hofs
+  def foreach(f: A => Unit): Unit
+
+  def sort(compare: (A, A) => Int): MyList[A]
+
+  def zipWith[B, C](list: MyList[B], zip: (A, B) => C): MyList[C]
 }
 
 case object EmptyList extends MyList[Nothing] {
@@ -50,6 +57,16 @@ case object EmptyList extends MyList[Nothing] {
   override def filter(predicate: Nothing => Boolean): MyList[Nothing] = EmptyList
 
   override def ++[B >: Nothing](list: MyList[B]): MyList[B] = list
+
+  // hofs
+  override def foreach(f: Nothing => Unit): Unit = ()
+
+  override def sort(compare: (Nothing, Nothing) => Int): EmptyList.type = EmptyList
+
+  override def zipWith[B, C](list: MyList[B], zip: (Nothing, B) => C): MyList[C] = {
+    if (!list.isEmpty) throw new RuntimeException("Lists do not have the same length")
+    else EmptyList
+  }
 }
 
 case class ConsList[+A](h: A, t: MyList[A]) extends MyList[A] {
@@ -80,6 +97,27 @@ case class ConsList[+A](h: A, t: MyList[A]) extends MyList[A] {
   }
 
   override def ++[B >: A](list: MyList[B]): MyList[B] = new ConsList[B](h, t ++ list)
+
+  // hofs
+  override def foreach(f: A => Unit): Unit = {
+    f(h)
+    t.foreach(f)
+  }
+
+  override def sort(compare: (A, A) => Int): MyList[A] = {
+    def insert(x: A, sortedList: MyList[A]): MyList[A] = {
+      if (sortedList.isEmpty) new ConsList(x, EmptyList)
+      else if (compare(x, sortedList.head()) <= 0) new ConsList(x, sortedList)
+      else new ConsList(sortedList.head(), insert(x, sortedList.tail()))
+    }
+
+    val sortedTail = t.sort(compare)
+    insert(h, sortedTail)
+  }
+
+  override def zipWith[B, C](list: MyList[B], zip: (A, B) => C): MyList[C] = {
+
+  }
 }
 
 object ConsList {
@@ -100,4 +138,7 @@ object ListTests extends App {
   val anotherListOfIntegers: MyList[Int] = new ConsList(6, new ConsList(4, new ConsList(5, EmptyList)))
   println(listOfIntegers ++ anotherListOfIntegers)
   println(listOfIntegers.flatMap((element: Int) => new ConsList(element, new ConsList(element + 1, EmptyList))).toString)
+
+  listOfIntegers.foreach(println)
+  println(listOfIntegers.sort((x, y) => y - x))
 }
